@@ -8,13 +8,14 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <title>{{ config('app.name') }}</title>
     @stack('styles')
+    <script src="{{ asset('js/app.js') }}"></script>
     @livewireStyles
 </head>
 
 <body>
 
     {{ $slot }}
-    <script src="{{ asset('js/app.js') }}"></script>
+
     @livewireScripts
     @stack('scripts')
 </body>

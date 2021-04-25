@@ -21,7 +21,7 @@
                 <div class="relative md:w-1/3">
                     <input type="search"
                         class="w-full pl-10 pr-4 py-2 rounded-lg shadow focus:outline-none focus:shadow-outline text-gray-600 font-medium"
-                        placeholder="Search...">
+                        placeholder="Search..." wire:model.debounce.500ms="search">
                     <div class="absolute top-0 left-0 inline-flex items-center p-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-400" viewBox="0 0 24 24"
                             stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -31,6 +31,21 @@
                             <line x1="21" y1="21" x2="15" y2="15" />
                         </svg>
                     </div>
+                </div>
+            </div>
+            <div class="">
+                <div class="relative inline-flex mr-2">
+                    <svg class="w-2 h-2 absolute top-0 right-0 m-4 pointer-events-none"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 412 232">
+                        <path
+                            d="M206 171.144L42.678 7.822c-9.763-9.763-25.592-9.763-35.355 0-9.763 9.764-9.763 25.592 0 35.355l181 181c4.88 4.882 11.279 7.323 17.677 7.323s12.796-2.441 17.678-7.322l181-181c9.763-9.764 9.763-25.592 0-35.355-9.763-9.763-25.592-9.763-35.355 0L206 171.144z"
+                            fill="#648299" fill-rule="nonzero" /></svg>
+                    <select wire:model="paginate" name="paginate" id="paginate"
+                        class="border border-gray-300 rounded-lg text-gray-500 h-10 pl-5 pr-10 inline-flex items-center bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline appearance-none">
+                        @foreach ($this->defaultPageOptions as $page)
+                        <option value="{{ $page }}">{{ $page }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div>
@@ -73,7 +88,7 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative" style="height: 405px;">
+        <div class="overflow-x-auto bg-white rounded-lg shadow overflow-y-auto relative">
             <table class="border-collapse table-auto w-full whitespace-no-wrap bg-white table-striped relative">
                 <thead>
                     <tr class="text-left">
@@ -110,8 +125,15 @@
                         <td class="border-dashed border-t border-gray-200 email">
                             <span class="text-gray-700 px-6 py-3 flex items-center">{{ $user->email }}</span>
                         </td>
+                        <td class="border-dashed border-t border-gray-200 role">
+                            <span class="text-gray-700 px-6 py-3 flex items-center">{{ $user->role->name }}</span>
+                        </td>
+                        <td class="border-dashed border-t border-gray-200 post">
+                            <span
+                                class="text-gray-700 px-6 py-3 flex items-center">{{ $user->posts->first()->title ?? '' }}</span>
+                        </td>
                         <td class="border-dashed border-t border-gray-200 gender">
-                            <span class="text-gray-700 px-6 py-3 flex items-center">{{ $user->gender }}</span>
+                            <span class="text-gray-700 px-6 py-3 flex items-center">{{ ucfirst($user->gender) }}</span>
                         </td>
                         <td class="border-dashed border-t border-gray-200 phone">
                             <span class="text-gray-700 px-6 py-3 flex items-center">{{ $user->phone }}</span>
@@ -124,6 +146,10 @@
                     @endforelse
                 </tbody>
             </table>
+            <div class="m-5">
+                {{ $users->links() }}
+            </div>
+
         </div>
     </div>
 </div>
@@ -145,7 +171,13 @@
     					{
     						'key': 'email',
     						'value': 'Email'
-    					},
+    					},{
+    						'key': 'role',
+    						'value': 'Role'
+    					},{
+                        'key': 'post',
+                        'value': 'Post'
+                        },
     					{
     						'key': 'gender',
     						'value': 'Gender'

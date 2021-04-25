@@ -3,14 +3,24 @@
 namespace App\Http\Livewire;
 
 use App\Models\User;
+use App\Traits\DataTables;
 use Livewire\Component;
 use Livewire\WithPagination;
+use DB;
 
 class UserComponent extends Component
 {
-    use WithPagination;
+    use WithPagination, DataTables;
 
-    public $paginate = 10;
+    public bool $edit = false;
+    public $location;
+    public $locationId;
+    public $searchColumns = ['name', 'email', 'role.name'];
+
+    public function mount()
+    {
+        $this->model = User::class;
+    }
 
     public function render()
     {
@@ -26,6 +36,6 @@ class UserComponent extends Component
 
     public function getUsersQueryProperty()
     {
-        return User::query();
+        return $this->searchRecord(['role', 'posts']);
     }
 }
