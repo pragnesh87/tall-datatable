@@ -21,7 +21,7 @@
                 <div class="relative md:w-1/3">
                     <input type="search"
                         class="w-full pl-10 pr-4 py-2 rounded-lg shadow focus:outline-none focus:shadow-outline text-gray-600 font-medium"
-                        placeholder="Search..." wire:model.debounce.500ms="search">
+                        placeholder="Search..." wire:model.lazy="search">
                     <div class="absolute top-0 left-0 inline-flex items-center p-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-400" viewBox="0 0 24 24"
                             stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -51,7 +51,7 @@
             <div>
                 <div class="shadow rounded-lg flex">
                     <div class="relative">
-                        <button @click.prevent="open = !open"
+                        <button x-on:click.prevent="open = !open"
                             class="rounded-lg inline-flex items-center bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline text-gray-500 font-semibold py-2 px-2 md:px-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:hidden" viewBox="0 0 24 24"
                                 stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -69,7 +69,7 @@
                             </svg>
                         </button>
 
-                        <div x-show="open" @click.away="open = false"
+                        <div x-show="open" x-on:click.away="open = false"
                             class="z-40 absolute top-0 right-0 w-40 bg-white rounded-lg shadow-lg mt-12 -mr-1 block py-1 overflow-hidden">
                             <template x-for="heading in headings">
                                 <label
@@ -77,7 +77,7 @@
                                     <div class="text-teal-600 mr-3">
                                         <input type="checkbox"
                                             class="form-checkbox focus:outline-none focus:shadow-outline" checked
-                                            @click="toggleColumn(heading.key)">
+                                            x-on:click="toggleColumn(heading.key)">
                                     </div>
                                     <div class="select-none text-gray-700" x-text="heading.value"></div>
                                 </label>
@@ -96,7 +96,7 @@
                             <label
                                 class="text-teal-500 inline-flex justify-between items-center hover:bg-gray-200 px-2 py-2 rounded-lg cursor-pointer">
                                 <input type="checkbox" class="form-checkbox focus:outline-none focus:shadow-outline"
-                                    @click="selectAllCheckbox($event);">
+                                    x-on:click="selectAllCheckbox($event);">
                             </label>
                         </th>
                         <template x-for="heading in headings">
@@ -113,7 +113,7 @@
                                 class="text-teal-500 inline-flex justify-between items-center hover:bg-gray-200 px-2 py-2 rounded-lg cursor-pointer">
                                 <input type="checkbox"
                                     class="form-checkbox rowCheckbox focus:outline-none focus:shadow-outline"
-                                    :name="{{ $user->id }}" @click="getRowDetail($event, {{ $user->id }})">
+                                    :name="{{ $user->id }}" x-on:click="getRowDetail($event, {{ $user->id }})">
                             </label>
                         </td>
                         <td class="border-dashed border-t border-gray-200 id">
@@ -171,10 +171,12 @@
     					{
     						'key': 'email',
     						'value': 'Email'
-    					},{
+    					},
+                        {
     						'key': 'role',
     						'value': 'Role'
-    					},{
+    					},
+                        {
                         'key': 'post',
                         'value': 'Post'
                         },
