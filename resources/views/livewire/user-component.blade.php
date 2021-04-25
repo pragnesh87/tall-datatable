@@ -2,7 +2,7 @@
     <div class="container mx-auto py-6 px-4" x-data="datatables()" x-cloak>
         <h1 class="text-3xl py-4 border-b mb-10">Datatable</h1>
 
-        <div x-show="selectedRows.length" class="bg-green-200 fixed top-0 left-0 right-0 z-40 w-full shadow">
+        {{-- <div x-show="selectedRows.length" class="bg-green-200 fixed top-0 left-0 right-0 z-40 w-full shadow">
             <div class="container mx-auto px-4 py-4">
                 <div class="flex md:items-center">
                     <div class="mr-4 flex-shrink-0">
@@ -14,7 +14,7 @@
                     <div x-html="selectedRows.length + ' rows are selected'" class="text-green-800 text-lg"></div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div class="mb-4 flex justify-between items-center">
             <div class="flex-1 pr-4">
@@ -33,6 +33,37 @@
                     </div>
                 </div>
             </div>
+
+            <div class="mr-2" x-show="selectedRows.length > 1">
+                <div class="relative" x-data="{ showMultiOption: false }">
+                    <button x-on:click="showMultiOption = !showMultiOption"
+                        x-on:keydown.escape="showMultiOption = false"
+                        class="rounded-lg inline-flex items-center bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline text-gray-500 font-semibold py-2 px-2 md:px-4">
+                        <span class="hidden md:block">With Checked</span>
+                        <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
+                            height="24">
+                            <path
+                                d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"
+                                class="heroicon-ui"></path>
+                        </svg>
+                    </button>
+                    <ul x-show="showMultiOption" x-on:click.away="showMultiOption = false"
+                        class="absolute font-normal bg-white shadow overflow-hidden rounded w-48 border mt-2 py-1 right-0 z-20">
+                        <li>
+                            <a href="#" class="flex items-center px-3 py-3 hover:bg-gray-200"
+                                wire:click.prevent="deleteSelected">
+                                <span class="ml-2">Delete</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="flex items-center px-3 py-3 hover:bg-gray-200">
+                                <span class="ml-2">Export</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
             <div class="">
                 <div class="relative inline-flex mr-2">
                     <svg class="w-2 h-2 absolute top-0 right-0 m-4 pointer-events-none"
@@ -71,7 +102,7 @@
 
                         <div x-show="open" x-on:click.away="open = false"
                             class="z-40 absolute top-0 right-0 w-40 bg-white rounded-lg shadow-lg mt-12 -mr-1 block py-1 overflow-hidden">
-                            <template x-for="heading in headings">
+                            <template x-for="heading in columns">
                                 <label
                                     class="flex justify-start items-center text-truncate hover:bg-gray-100 px-4 py-2">
                                     <div class="text-teal-600 mr-3">
@@ -95,11 +126,12 @@
                         <th class="py-2 px-3 sticky top-0 border-b border-gray-200 bg-gray-100">
                             <label
                                 class="text-teal-500 inline-flex justify-between items-center hover:bg-gray-200 px-2 py-2 rounded-lg cursor-pointer">
-                                <input type="checkbox" class="form-checkbox focus:outline-none focus:shadow-outline"
+                                <input id="selectAll" type="checkbox"
+                                    class="form-checkbox focus:outline-none focus:shadow-outline"
                                     x-on:click="selectAllCheckbox($event);">
                             </label>
                         </th>
-                        <template x-for="heading in headings">
+                        <template x-for="heading in columns">
                             <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs"
                                 x-text="heading.value" :x-ref="heading.key" :class="{ [heading.key]: true }"></th>
                         </template>
@@ -159,39 +191,10 @@
 <script>
     function datatables() {
     			return {
-    				headings: [
-    					{
-    						'key': 'id',
-    						'value': 'User ID'
-    					},
-    					{
-    						'key': 'name',
-    						'value': 'Name'
-    					},
-    					{
-    						'key': 'email',
-    						'value': 'Email'
-    					},
-                        {
-    						'key': 'role',
-    						'value': 'Role'
-    					},
-                        {
-                        'key': 'post',
-                        'value': 'Post'
-                        },
-    					{
-    						'key': 'gender',
-    						'value': 'Gender'
-    					},
-    					{
-    						'key': 'phone',
-    						'value': 'Phone'
-    					}
-    				],
     				selectedRows: [],
-
+                    columns: @entangle('columns'),
     				open: false,
+                    showMultiOption: false,
 
     				toggleColumn(key) {
     					// Note: All td must have the same class name as the headings key!
@@ -214,9 +217,14 @@
     					if (rows.includes(id)) {
     						let index = rows.indexOf(id);
     						rows.splice(index, 1);
+                            document.getElementById('selectAll').checked = false;
     					} else {
     						rows.push(id);
     					}
+                        if(document.querySelectorAll('.rowCheckbox').length == rows.length){
+                            document.getElementById('selectAll').checked = true;
+                        }
+                        @this.set('selected', rows);
     				},
 
     				selectAllCheckbox($event) {
@@ -236,7 +244,8 @@
     						this.selectedRows = [];
     					}
 
-    					console.log(this.selectedRows);
+                        @this.set('selected', this.selectedRows);
+    					//console.log(this.selectedRows);
     				}
     			}
     		}

@@ -33,15 +33,22 @@ trait DataTables
     public function buildDBQuery($relation)
     {
         $this->query = $this->builder();
-        $this->searchRecord($relation) //perform search
+        $this
+            ->loadRelation($relation)
+            ->searchRecord() //perform search
             ->sortRecord();
     }
 
-    public function searchRecord($relation = [])
+    public function loadRelation($relation)
     {
         if (!empty($relation)) {
             $this->query->with($relation);
         }
+        return $this;
+    }
+
+    public function searchRecord()
+    {
         if (!$this->search) {
             return $this;
         }
