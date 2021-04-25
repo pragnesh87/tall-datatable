@@ -16,11 +16,7 @@ class UserComponent extends Component
     public $location;
     public $locationId;
     public $searchColumns = ['name', 'email', 'role.name'];
-
-    public function mount()
-    {
-        $this->model = User::class;
-    }
+    public $model = User::class;
 
     public function render()
     {
@@ -36,6 +32,6 @@ class UserComponent extends Component
 
     public function getUsersQueryProperty()
     {
-        return $this->searchRecord(['role', 'posts']);
+        return $this->getQuery(['role', 'posts']);
     }
 }
