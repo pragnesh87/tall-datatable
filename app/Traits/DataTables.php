@@ -20,9 +20,9 @@ trait DataTables
 
     protected $query;
 
-    public function getQuery($relation = [])
+    public function getQuery()
     {
-        $this->buildDBQuery($relation);
+        $this->buildDBQuery();
 
         return $this->query;
     }
@@ -32,19 +32,19 @@ trait DataTables
         return $this->model::query();
     }
 
-    public function buildDBQuery($relation)
+    public function buildDBQuery()
     {
         $this->query = $this->builder();
         $this
-            ->loadRelation($relation)
+            ->loadRelation() //load relation if defined
             ->searchRecord() //perform search
-            ->sortRecord();
+            ->sortRecord(); //sort records
     }
 
-    public function loadRelation($relation)
+    public function loadRelation()
     {
-        if (!empty($relation)) {
-            $this->query->with($relation);
+        if (!empty($this->relation)) {
+            $this->query->with($this->relation);
         }
         return $this;
     }
@@ -119,12 +119,30 @@ trait DataTables
         return Excel::download(new DatatableExport($this->getQuery()->get()), 'DatatableExport.xlsx');
     }
 
+    public function exportSelected()
+    {
+        $query = $this->getQuery()
+            ->whereKey($this->selected)
+            ->get();
+
+        $heading = array_column($this->columns, 'value');
+        return Excel::download(new DatatableExport($query, $heading), 'DatatableExport.xlsx');
+    }
+
     public function deleteSelected()
     {
-        //dd($this->selected);
+        $this->model::whereKey($this->selected)->delete();
+        $this->selected = [];
+        $this->selectAll = false;
+        $this->selectPage = false;
         $this->dispatchBrowserEvent('showToast', [
             'message' => 'Selected Records were deleted Successfully',
             'type' => 'success'
         ]);
+    }
+
+    public function setPaginationOption($options)
+    {
+        $this->defaultPageOptions = $options;
     }
 }

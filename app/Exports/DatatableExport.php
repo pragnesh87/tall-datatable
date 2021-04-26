@@ -11,10 +11,12 @@ class DatatableExport implements FromCollection, WithHeadings
     use Exportable;
 
     public $collection;
+    public $heading = [];
 
-    public function __construct($collection)
+    public function __construct($collection, $heading = [])
     {
         $this->collection = $collection;
+        $this->heading = $heading;
     }
 
     public function collection()
@@ -24,6 +26,6 @@ class DatatableExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return array_keys((array) $this->collection->first());
+        return $this->heading;
     }
 }

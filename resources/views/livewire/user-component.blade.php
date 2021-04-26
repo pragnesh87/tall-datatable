@@ -42,7 +42,8 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="flex items-center px-3 py-3 hover:bg-gray-200">
+                            <a href="#" class="flex items-center px-3 py-3 hover:bg-gray-200"
+                                wire:click.prevent="$emit('swal:confirm-message', 'Are you sure you want to export these Records?', 'exportSelected')">
                                 <span class="ml-2">Export</span>
                             </a>
                         </li>

@@ -16,7 +16,6 @@ class UserComponent extends Component
     public $location;
     public $locationId;
     public $searchColumns = ['name', 'email', 'role.name'];
-    public $model = User::class;
     public $columns = [
         ['key' => 'id', 'value' => 'ID'],
         ['key' => 'name', 'value' => 'Name'],
@@ -27,8 +26,14 @@ class UserComponent extends Component
         ['key' => 'phone', 'value' => 'Phone'],
     ];
 
-    protected $listeners = ['deleteSelected'];
+    protected $model = User::class;
+    protected $relation = ['role', 'posts'];
+    protected $listeners = ['deleteSelected', 'exportSelected'];
 
+    public function mount()
+    {
+        $this->setPaginationOption([10, 15, 20]);
+    }
 
     public function render()
     {
@@ -44,6 +49,6 @@ class UserComponent extends Component
 
     public function getUsersQueryProperty()
     {
-        return $this->getQuery(['role', 'posts']);
+        return $this->getQuery();
     }
 }
