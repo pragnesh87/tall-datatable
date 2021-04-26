@@ -2,20 +2,6 @@
     <div class="container mx-auto py-6 px-4" x-data="datatables()" x-cloak>
         <h1 class="text-3xl py-4 border-b mb-10">Datatable</h1>
 
-        {{-- <div x-show="selectedRows.length" class="bg-green-200 fixed top-0 left-0 right-0 z-40 w-full shadow">
-            <div class="container mx-auto px-4 py-4">
-                <div class="flex md:items-center">
-                    <div class="mr-4 flex-shrink-0">
-                        <svg class="h-8 w-8 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                                clip-rule="evenodd" /></svg>
-                    </div>
-                    <div x-html="selectedRows.length + ' rows are selected'" class="text-green-800 text-lg"></div>
-                </div>
-            </div>
-        </div> --}}
-
         <div class="mb-4 flex justify-between items-center">
             <div class="flex-1 pr-4">
                 <div class="relative md:w-1/3">
@@ -35,11 +21,11 @@
             </div>
 
             <div class="mr-2" x-show="selectedRows.length > 1">
-                <div class="relative" x-data="{ showMultiOption: false }">
+                <div class="relative">
                     <button x-on:click="showMultiOption = !showMultiOption"
                         x-on:keydown.escape="showMultiOption = false"
                         class="rounded-lg inline-flex items-center bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline text-gray-500 font-semibold py-2 px-2 md:px-4">
-                        <span class="hidden md:block">With Checked</span>
+                        <span class="hidden md:block" x-ref="multiselect" x-text="selecttext"></span>
                         <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
                             height="24">
                             <path
@@ -51,7 +37,7 @@
                         class="absolute font-normal bg-white shadow overflow-hidden rounded w-48 border mt-2 py-1 right-0 z-20">
                         <li>
                             <a href="#" class="flex items-center px-3 py-3 hover:bg-gray-200"
-                                wire:click.prevent="deleteSelected">
+                                wire:click.prevent="$emit('swal:deleteconfirm', 'deleteSelected')">
                                 <span class="ml-2">Delete</span>
                             </a>
                         </li>
@@ -195,6 +181,7 @@
                     columns: @entangle('columns'),
     				open: false,
                     showMultiOption: false,
+                    selecttext: '0 Selected',
 
     				toggleColumn(key) {
     					// Note: All td must have the same class name as the headings key!
@@ -224,6 +211,7 @@
                         if(document.querySelectorAll('.rowCheckbox').length == rows.length){
                             document.getElementById('selectAll').checked = true;
                         }
+                        this.selecttext = rows.length + ' Selected';
                         @this.set('selected', rows);
     				},
 
@@ -244,6 +232,7 @@
     						this.selectedRows = [];
     					}
 
+                        this.selecttext = this.selectedRows.length + ' Selected';
                         @this.set('selected', this.selectedRows);
     					//console.log(this.selectedRows);
     				}

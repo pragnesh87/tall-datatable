@@ -3,6 +3,8 @@
 namespace App\Traits;
 
 use Illuminate\Support\Str;
+use App\Exports\DatatableExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 trait DataTables
 {
@@ -110,5 +112,19 @@ trait DataTables
     public function updatingPaginate()
     {
         $this->resetPage();
+    }
+
+    public function export()
+    {
+        return Excel::download(new DatatableExport($this->getQuery()->get()), 'DatatableExport.xlsx');
+    }
+
+    public function deleteSelected()
+    {
+        //dd($this->selected);
+        $this->dispatchBrowserEvent('showToast', [
+            'message' => 'Selected Records were deleted Successfully',
+            'type' => 'success'
+        ]);
     }
 }

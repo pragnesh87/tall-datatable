@@ -2,6 +2,8 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+@import "toastr";
+
 [x-cloak] {
     display: none;
 }

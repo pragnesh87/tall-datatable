@@ -15,9 +15,14 @@
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.2.12",
+        "resolve-url-loader": "^3.1.2",
+        "sass": "^1.32.11",
+        "sass-loader": "^11.0.1",
+        "sweetalert2": "^10.16.6",
         "tailwindcss": "^2.1.2"
     },
     "dependencies": {
-        "alpinejs": "^2.8.2"
+        "alpinejs": "^2.8.2",
+        "toastr": "^2.1.4"
     }
 }

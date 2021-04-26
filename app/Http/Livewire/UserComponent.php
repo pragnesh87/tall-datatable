@@ -27,6 +27,9 @@ class UserComponent extends Component
         ['key' => 'phone', 'value' => 'Phone'],
     ];
 
+    protected $listeners = ['deleteSelected'];
+
+
     public function render()
     {
         return view('livewire.user-component', [
@@ -42,10 +45,5 @@ class UserComponent extends Component
     public function getUsersQueryProperty()
     {
         return $this->getQuery(['role', 'posts']);
-    }
-
-    public function deleteSelected()
-    {
-        dd($this->selected);
     }
 }
