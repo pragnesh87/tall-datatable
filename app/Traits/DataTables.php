@@ -141,6 +141,16 @@ trait DataTables
         ]);
     }
 
+    public function deleteRecord($record_id)
+    {
+        $record = $this->model::findOrFail($record_id);
+        $record->delete();
+        $this->dispatchBrowserEvent('showToast', [
+            'message' => 'Record deleted Successfully',
+            'type' => 'success'
+        ]);
+    }
+
     public function setPaginationOption($options)
     {
         $this->defaultPageOptions = $options;

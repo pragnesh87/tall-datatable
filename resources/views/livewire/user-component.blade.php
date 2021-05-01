@@ -2,6 +2,143 @@
     <div class="container mx-auto py-6 px-4" x-data="datatables()" x-cloak>
         <h1 class="text-3xl py-4 border-b mb-10">Datatable</h1>
 
+        <div class="mb-4 flex justify-end items-center">
+            <button type="button" class="py-2 px-4 bg-green-500 text-white rounded justify-self-end"
+                x-on:click="showModal = !showModal" @keydown.escape="showModal = false">Add</button>
+        </div>
+
+        <div id="bgMask" class="fixed z-10 top-0 right-0 w-full h-full bg-black opacity-50" x-show="showModal">
+        </div>
+        <section id="modal" class="flex items-center justify-center" wire:ignore.self>
+            <div class="fixed z-50 top-10 max-w-xl bg-gray-200 md:rounded shadow-2xl" x-show="showModal"
+                @click.away="showModal = false" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform scale-90"
+                x-transition:enter-end="opacity-100 transform scale-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 transform scale-100"
+                x-transition:leave-end="opacity-0 transform scale-90">
+
+                <h2 class="text-2xl font-bold bg-white px-6 py-2 md:rounded-t">Add User</h2>
+                <div>
+                    <form class="px-8 pt-6 pb-8 mb-4" wire:submit.prevent="save">
+                        <div class="flex flex-wrap -mx-3 mb-2">
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                                    Name <span class="text-red-300">*</span>
+                                </label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="name" type="text" placeholder="Joe Doe" wire:model.lazy="user.name" required>
+                                @error('user.name')
+                                <span class="text-red-600">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                                    Email <span class="text-red-300">*</span>
+                                </label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="email" type="email" placeholder="user@example.com" wire:model.lazy="user.email"
+                                    required>
+                                @error('user.email')
+                                <span class="text-red-600">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap -mx-3 mb-2">
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">
+                                    Phone
+                                </label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="phone" type="text" placeholder="+10000000000" wire:model.lazy="user.phone">
+                            </div>
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="gender">
+                                    Gender <span class="text-red-300">*</span>
+                                </label>
+                                <select
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="gender" wire:model.lazy="user.gender" required>
+                                    <option>Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                                @error('user.gender')
+                                <span class="text-red-600">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="role_id">
+                                Role <span class="text-red-300">*</span>
+                            </label>
+                            <select
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="role_id" wire:model.lazy="user.role_id" required>
+                                <option>Select Role</option>
+                                @foreach ($roles as $role)
+                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('user.role_id')
+                            <span class="text-red-600">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        @if(!$edit)
+                        <div class="flex flex-wrap -mx-3 mb-2">
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                                    Password <span class="text-red-300">*</span>
+                                </label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="password" type="password" placeholder="******" wire:model.lazy="user.password"
+                                    required />
+                                @error('user.password')
+                                <span class="text-red-600">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="password_confirmation">
+                                    Confirm Password <span class="text-red-300">*</span>
+                                </label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="password_confirmation" type="password" placeholder="******"
+                                    wire:model.lazy="user.password_confirmation" required />
+                                @error('user.password_confirmation')
+                                <span class="text-red-600">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        @endif
+
+                        <div class="flex items-center justify-between">
+                            <button
+                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                type="submit">
+                                Save
+                            </button>
+                            <button
+                                class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                type="button" x-on:click="showModal = false">
+                                Close
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </section>
+
         <div class="mb-4 flex justify-between items-center">
             <div class="flex-1 pr-4">
                 <div class="relative md:w-1/3">
@@ -58,6 +195,9 @@
                         <path
                             d="M206 171.144L42.678 7.822c-9.763-9.763-25.592-9.763-35.355 0-9.763 9.764-9.763 25.592 0 35.355l181 181c4.88 4.882 11.279 7.323 17.677 7.323s12.796-2.441 17.678-7.322l181-181c9.763-9.764 9.763-25.592 0-35.355-9.763-9.763-25.592-9.763-35.355 0L206 171.144z"
                             fill="#648299" fill-rule="nonzero" /></svg>
+                    <label
+                        class="text-teal-500 inline-flex justify-between items-center hover:bg-gray-200 px-2 py-2 rounded-lg cursor-pointer">Per
+                        Page</label>
                     <select wire:model="paginate" name="paginate" id="paginate"
                         class="border border-gray-300 rounded-lg text-gray-500 h-10 pl-5 pr-10 inline-flex items-center bg-white hover:text-blue-500 focus:outline-none focus:shadow-outline appearance-none">
                         @foreach ($this->defaultPageOptions as $page)
@@ -122,6 +262,11 @@
                             <th class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs"
                                 x-text="heading.value" :x-ref="heading.key" :class="{ [heading.key]: true }"></th>
                         </template>
+                        <th
+                            class="bg-gray-100 sticky top-0 border-b border-gray-200 px-6 py-2 text-gray-600 font-bold tracking-wider uppercase text-xs">
+                            <label class="">
+                                Action</label>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -157,6 +302,13 @@
                         <td class="border-dashed border-t border-gray-200 phone">
                             <span class="text-gray-700 px-6 py-3 flex items-center">{{ $user->phone }}</span>
                         </td>
+                        <td class="border-dashed border-t border-gray-200 mr-2">
+                            <button
+                                class="bg-blue-500 rounded text-white px-4 py-2 hover:bg-blue-300 hover:outline-none"
+                                wire:click.prevent="edit({{ $user->id }})">Edit</button>
+                            <button class="bg-red-500 rounded text-white px-4 py-2 hover:bg-red-300 hover:outline-none"
+                                wire:click.prevent="$emit('swal:deleteconfirm', 'onConfirmed', '{{ $user->id }}')">Delete</button>
+                        </td>
                     </tr>
                     @empty
                     <tr>
@@ -170,6 +322,9 @@
             </div>
 
         </div>
+
+
+
     </div>
 </div>
 
@@ -183,6 +338,7 @@
     				open: false,
                     showMultiOption: false,
                     selecttext: '0 Selected',
+                    showModal: @entangle('showModal'),
 
     				toggleColumn(key) {
     					// Note: All td must have the same class name as the headings key!
